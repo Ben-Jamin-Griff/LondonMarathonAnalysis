@@ -80,29 +80,20 @@ def getSplits(link):
 
 def createColumnData(entries):
     columnData = []
-    breakpoint()
-    firstRow = entries[0].select('div.list-field')
+    firstRow = entries[0].find_all('th')
     for idx, i in enumerate(firstRow):
-        if idx == 4:
-            rowValue = firstRow[idx].getText()[4:]
+        if idx == 2:
+            rowValue = firstRow[idx].getText()[1:-1]
             columnData.append(rowValue)
-        elif idx == 5:
-            rowValue = firstRow[idx].getText()[13:]
-            columnData.append(rowValue)
-        elif idx == 6:
-            rowValue = firstRow[idx].getText()[8:]
-            columnData.append(rowValue)
-        elif idx == 7:
-            rowValue = firstRow[idx].getText()[4:]
-            columnData.append(rowValue)
-        elif idx == 8:
-            rowValue = firstRow[idx].getText()[6:]
+        elif idx == 3:
+            rowValue = firstRow[idx].getText()[:4]
             columnData.append(rowValue)
         elif idx == 9:
             rowValue = firstRow[idx].getText()
         else:
-            rowValue = firstRow[idx].getText()
+            rowValue = firstRow[idx].getText()[1:]
             columnData.append(rowValue)
+
     columnData.insert(4, 'Country')
     columnData.append('Status')
     columnData.append('5K Split')
@@ -146,11 +137,11 @@ def cleanData(pageData):
         return
 
 # Collecting all data
-year = 2019
+year = 2018
 yearCounter = 0
 page = 1
 flag = 0
-while year == 2019:
+while year == 2018:
     print(year)
     print(yearCounter)
     while flag == 0:
@@ -160,9 +151,10 @@ while year == 2019:
                 #time.sleep(1)
                 res = requests.get('https://results.virginmoneylondonmarathon.com/' + str(year) + '/?page=' + str(page) + '&event=MAS&pid=search')
                 soup = BeautifulSoup(res.text, 'html.parser')
+                table = soup.find("table")
+                rows = table.findAll('tr')
+                columnData = createColumnData(rows)
                 breakpoint()
-                entries = soup.select('li.list-group-item.row')
-                columnData = createColumnData(entries)
                 pageData = createPageData(entries, year)
                 pageData = cleanData(pageData)
                 data = pd.DataFrame(data = None, columns = columnData)
@@ -188,8 +180,8 @@ while year == 2019:
             flag = 1
     year -= 1
     yearCounter += 1
-    page = 1
-    flag = 0
+    #page = 1
+    #flag = 0
 
 data.to_pickle('./data/results_test.pkl')
 print(datetime.datetime.now() - begin_time)
