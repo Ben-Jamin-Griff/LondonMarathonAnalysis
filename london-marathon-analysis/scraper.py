@@ -1,6 +1,6 @@
 import requests
 from bs4 import BeautifulSoup
-import pandas as pd
+#import pandas as pd
 import numpy as np
 import re
 import time
@@ -153,10 +153,10 @@ flag = 0
 while year == 2019:
     print(year)
     print(yearCounter)
-    while flag == 0:
+    while flag == 0 and page < 5:
         try:
             print(page)
-            if page == 1 and yearCounter == 0:
+            if page == 1:
                 #time.sleep(1)
                 res = requests.get('https://results.virginmoneylondonmarathon.com/' + str(year) + '/?page=' + str(page) + '&event=MAS&pid=search')
                 soup = BeautifulSoup(res.text, 'html.parser')
@@ -165,7 +165,7 @@ while year == 2019:
                 columnData = createColumnData(entries)
                 pageData = createPageData(entries, year)
                 pageData = cleanData(pageData)
-                data = pd.DataFrame(data = None, columns = columnData)
+                #data = pd.DataFrame(data = None, columns = columnData)
                 for idx, i in enumerate(pageData):
                     rowData = pageData[idx]
                     a_series = pd.Series(rowData, index = data.columns)
@@ -191,5 +191,6 @@ while year == 2019:
     page = 1
     flag = 0
 
-data.to_pickle('./data/results_test.pkl')
+#data.to_pickle('./data/results_test.pkl')
+print(data.head())
 print(datetime.datetime.now() - begin_time)
