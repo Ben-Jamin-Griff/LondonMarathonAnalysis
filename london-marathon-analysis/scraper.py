@@ -80,7 +80,6 @@ def getSplits(link):
 
 def createColumnData(entries):
     columnData = []
-    breakpoint()
     firstRow = entries[0].select('div.list-field')
     for idx, i in enumerate(firstRow):
         if idx == 4:
@@ -160,11 +159,12 @@ while year == 2019:
                 #time.sleep(1)
                 res = requests.get('https://results.virginmoneylondonmarathon.com/' + str(year) + '/?page=' + str(page) + '&event=MAS&pid=search')
                 soup = BeautifulSoup(res.text, 'html.parser')
-                breakpoint()
                 entries = soup.select('li.list-group-item.row')
                 columnData = createColumnData(entries)
                 pageData = createPageData(entries, year)
+                print(pageData)
                 pageData = cleanData(pageData)
+                print(pageData)
                 #data = pd.DataFrame(data = None, columns = columnData)
                 for idx, i in enumerate(pageData):
                     rowData = pageData[idx]
