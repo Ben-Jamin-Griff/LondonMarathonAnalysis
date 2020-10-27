@@ -1,6 +1,5 @@
 import requests
 from bs4 import BeautifulSoup
-#import pandas as pd
 import numpy as np
 import re
 import time
@@ -12,16 +11,19 @@ begin_time = datetime.datetime.now()
 # Functions
 def createPageData(entries, year):
     if len(entries) == 2:
+        print('...no data in entries')
         return
     pageData = []
     for idx, i in enumerate(entries):
         idx +=1
         if idx == len(entries):
+            print('...returning page data')
             return pageData
         row = entries[idx].select('div.list-field')
         name = entries[idx].select('h4.list-field')[0].getText()[:-6]
         country = entries[idx].select('h4.list-field')[0].getText()[-4:-1]
-        link = entries[idx].select('a', href=True)[0]['href']
+        #link = entries[idx].select('a', href=True)[0]['href']
+        link = entries[idx].select('a')[0]['href']
         link = 'https://results.virginmoneylondonmarathon.com/' + str(year) + '/' + str(link)
         splits = getSplits(link)
         entry = []
@@ -152,7 +154,7 @@ flag = 0
 while year == 2019:
     print(year)
     print(yearCounter)
-    while flag == 0 and page < 5:
+    while flag == 0 and page < 4:
         try:
             print(page)
             if page == 1:
@@ -162,14 +164,14 @@ while year == 2019:
                 entries = soup.select('li.list-group-item.row')
                 columnData = createColumnData(entries)
                 pageData = createPageData(entries, year)
-                print(pageData)
                 pageData = cleanData(pageData)
-                print(pageData)
-                #data = pd.DataFrame(data = None, columns = columnData)
+                data = {}
+                for var in columnData:
+                	data[var] = []
                 for idx, i in enumerate(pageData):
                     rowData = pageData[idx]
-                    a_series = pd.Series(rowData, index = data.columns)
-                    data = data.append(a_series, ignore_index=True)
+                    for rowIdx, rowValue in enumerate(rowData):
+                    	data[columnData[rowIdx]].append(rowValue)
                 page += 1
             else:
                 #time.sleep(1)
@@ -180,17 +182,21 @@ while year == 2019:
                 pageData = cleanData(pageData)
                 for idx, i in enumerate(pageData):
                     rowData = pageData[idx]
-                    a_series = pd.Series(rowData, index = data.columns)
-                    data = data.append(a_series, ignore_index=True)
+                    for rowIdx, rowValue in enumerate(rowData):
+                    	data[columnData[rowIdx]].append(rowValue)
                 page += 1
         except:
-            print("Oops! No data on this page...")
+            print("Oops! Something went wrong...")
             flag = 1
     year -= 1
     yearCounter += 1
     page = 1
     flag = 0
 
-#data.to_pickle('./data/results_test.pkl')
-print(data.head())
+with open('test_2019.pkl', 'wb') as handle:
+    pickle.dump(data, handle, protocol=pickle.HIGHEST_PROTOCOL)
+
+#with open('test_2019.pkl', 'rb') as handle:
+#    b = pickle.load(handle)
+
 print(datetime.datetime.now() - begin_time)
