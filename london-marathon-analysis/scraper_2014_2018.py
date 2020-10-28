@@ -17,13 +17,21 @@ def createPageData(entries, year):
     for idx, i in enumerate(entries):
         idx +=1
         if idx == len(entries):
-            print('...returning page data')
-            return pageData
-        row = entries[idx].select('div.list-field')
-        name = entries[idx].select('h4.list-field')[0].getText()[:-6]
-        country = entries[idx].select('h4.list-field')[0].getText()[-4:-1]
-        #link = entries[idx].select('a', href=True)[0]['href']
-        link = entries[idx].select('a')[0]['href']
+          print('...returning page data')
+          return pageData
+          
+        #firstRow = entries[0].find_all('th')
+        #for val in firstRow:
+        #	print(val.getText())
+        	
+        row = entries[idx].find_all('td')
+        
+        #for val in row:
+        #	print(val)
+        
+        country = row[3].getText()[-5:-2]
+        name = row[3].getText()[1:-7]
+        link = row[3].select('a')[0]['href']
         link = 'https://results.virginmoneylondonmarathon.com/' + str(year) + '/' + str(link)
         splits = getSplits(link)
         entry = []
@@ -82,28 +90,20 @@ def getSplits(link):
 
 def createColumnData(entries):
     columnData = []
-    firstRow = entries[0].select('div.list-field')
+    firstRow = entries[0].find_all('th')
     for idx, i in enumerate(firstRow):
-        if idx == 4:
-            rowValue = firstRow[idx].getText()[4:]
+        if idx == 2:
+            rowValue = firstRow[idx].getText()[1:-1]
             columnData.append(rowValue)
-        elif idx == 5:
-            rowValue = firstRow[idx].getText()[13:]
-            columnData.append(rowValue)
-        elif idx == 6:
-            rowValue = firstRow[idx].getText()[8:]
-            columnData.append(rowValue)
-        elif idx == 7:
-            rowValue = firstRow[idx].getText()[4:]
-            columnData.append(rowValue)
-        elif idx == 8:
-            rowValue = firstRow[idx].getText()[6:]
+        elif idx == 3:
+            rowValue = firstRow[idx].getText()[:4]
             columnData.append(rowValue)
         elif idx == 9:
             rowValue = firstRow[idx].getText()
         else:
-            rowValue = firstRow[idx].getText()
+            rowValue = firstRow[idx].getText()[1:]
             columnData.append(rowValue)
+
     columnData.insert(4, 'Country')
     columnData.append('Status')
     columnData.append('5K Split')
@@ -123,7 +123,7 @@ def cleanData(pageData):
         for idx, i in enumerate(pageData):
             row = pageData[idx]
             for idxx, j in enumerate(row):
-                if idxx == 3:
+                if idxx == 3 or idxx == 4:
                     a_string = row[idxx]
                     alphanumeric = ""
                     for character in a_string:
@@ -131,15 +131,15 @@ def cleanData(pageData):
                             alphanumeric += character
                     row[idxx] = alphanumeric
                 if idxx == 5:
-                    row[idxx] = row[idxx][4:]
-                elif idxx == 6:
-                    row[idxx] = row[idxx][13:]
-                elif idxx == 7:
-                    row[idxx] = row[idxx][8:]
-                elif idxx == 8:
-                    row[idxx] = row[idxx][4:]
-                elif idxx == 9:
-                    row[idxx] = row[idxx][6:]
+                    row.remove(j)
+                #elif idxx == 6:
+                #    row[idxx] = row[idxx][13:]
+                #elif idxx == 7:
+                #    row[idxx] = row[idxx][8:]
+                #elif idxx == 8:
+                #    row[idxx] = row[idxx][4:]
+                #elif idxx == 9:
+                #    row[idxx] = row[idxx][6:]
             pageData[idx] = row
         return pageData
     except:
@@ -147,11 +147,11 @@ def cleanData(pageData):
         return
 
 # Collecting all data
-year = 2019
+year = 2018
 yearCounter = 0
 page = 1
 flag = 0
-while year == 2019:
+while flag == 0 and year > 2013:
     print(year)
     while flag == 0 and page < 4:
         try:
@@ -160,9 +160,10 @@ while year == 2019:
                 #time.sleep(1)
                 res = requests.get('https://results.virginmoneylondonmarathon.com/' + str(year) + '/?page=' + str(page) + '&event=MAS&pid=search')
                 soup = BeautifulSoup(res.text, 'html.parser')
-                entries = soup.select('li.list-group-item.row')
-                columnData = createColumnData(entries)
-                pageData = createPageData(entries, year)
+                table = soup.find("table")
+                rows = table.findAll('tr')
+                columnData = createColumnData(rows)
+                pageData = createPageData(rows, year)
                 pageData = cleanData(pageData)
                 data = {}
                 for var in columnData:
@@ -176,8 +177,9 @@ while year == 2019:
                 #time.sleep(1)
                 res = requests.get('https://results.virginmoneylondonmarathon.com/' + str(year) + '/?page=' + str(page) + '&event=MAS&pid=search')
                 soup = BeautifulSoup(res.text, 'html.parser')
-                entries = soup.select('li.list-group-item.row')
-                pageData = createPageData(entries, year)
+                tables = soup.find("table")
+                rows = table.findAll('tr')
+                pageData = createPageData(rows, year)
                 pageData = cleanData(pageData)
                 for idx, i in enumerate(pageData):
                     rowData = pageData[idx]
@@ -186,18 +188,14 @@ while year == 2019:
                 page += 1
         except:
             print("Oops! Something went wrong...")
+            print("...year = " + str(year))
             flag = 1
     year -= 1
     yearCounter += 1
     page = 1
-    flag = 0
-    
-print(data)
-
-with open('test_' + str(year) + '.pkl', 'wb') as handle:
-    pickle.dump(data, handle, protocol=pickle.HIGHEST_PROTOCOL)
-
-#with open('test_2019.pkl', 'rb') as handle:
-#    b = pickle.load(handle)
+    #flag = 0
+    #print(data)
+    #with open('test_' + str(year) + '.pkl', 'wb') as handle:
+    #pickle.dump(data, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
 print(datetime.datetime.now() - begin_time)

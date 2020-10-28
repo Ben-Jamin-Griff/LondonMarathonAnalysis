@@ -1,6 +1,5 @@
 import requests
 from bs4 import BeautifulSoup
-import pandas as pd
 import numpy as np
 import re
 import time
@@ -12,16 +11,27 @@ begin_time = datetime.datetime.now()
 # Functions
 def createPageData(entries, year):
     if len(entries) == 2:
+        print('...no data in entries')
         return
     pageData = []
     for idx, i in enumerate(entries):
         idx +=1
         if idx == len(entries):
-            return pageData
-        row = entries[idx].select('div.list-field')
-        name = entries[idx].select('h4.list-field')[0].getText()[:-6]
-        country = entries[idx].select('h4.list-field')[0].getText()[-4:-1]
-        link = entries[idx].select('a', href=True)[0]['href']
+          print('...returning page data')
+          return pageData
+          
+        #firstRow = entries[0].find_all('th')
+        #for val in firstRow:
+        #	print(val.getText())
+        	
+        row = entries[idx].find_all('td')
+        
+        #for val in row:
+        #	print(val)
+        
+        country = row[3].getText()[-5:-2]
+        name = row[3].getText()[1:-7]
+        link = row[3].select('a')[0]['href']
         link = 'https://results.virginmoneylondonmarathon.com/' + str(year) + '/' + str(link)
         splits = getSplits(link)
         entry = []
@@ -113,7 +123,7 @@ def cleanData(pageData):
         for idx, i in enumerate(pageData):
             row = pageData[idx]
             for idxx, j in enumerate(row):
-                if idxx == 3:
+                if idxx == 3 or idxx == 4:
                     a_string = row[idxx]
                     alphanumeric = ""
                     for character in a_string:
@@ -121,15 +131,15 @@ def cleanData(pageData):
                             alphanumeric += character
                     row[idxx] = alphanumeric
                 if idxx == 5:
-                    row[idxx] = row[idxx][4:]
-                elif idxx == 6:
-                    row[idxx] = row[idxx][13:]
-                elif idxx == 7:
-                    row[idxx] = row[idxx][8:]
-                elif idxx == 8:
-                    row[idxx] = row[idxx][4:]
-                elif idxx == 9:
-                    row[idxx] = row[idxx][6:]
+                    row.remove(j)
+                #elif idxx == 6:
+                #    row[idxx] = row[idxx][13:]
+                #elif idxx == 7:
+                #    row[idxx] = row[idxx][8:]
+                #elif idxx == 8:
+                #    row[idxx] = row[idxx][4:]
+                #elif idxx == 9:
+                #    row[idxx] = row[idxx][6:]
             pageData[idx] = row
         return pageData
     except:
@@ -137,51 +147,55 @@ def cleanData(pageData):
         return
 
 # Collecting all data
-year = 2018
+year = 2013
 yearCounter = 0
 page = 1
 flag = 0
-while year == 2018:
+while flag == 0 and year == 2013:
     print(year)
-    print(yearCounter)
-    while flag == 0:
+    while flag == 0 and page < 4:
         try:
             print(page)
-            if page == 1 and yearCounter == 0:
+            if page == 1:
                 #time.sleep(1)
                 res = requests.get('https://results.virginmoneylondonmarathon.com/' + str(year) + '/?page=' + str(page) + '&event=MAS&pid=search')
                 soup = BeautifulSoup(res.text, 'html.parser')
                 table = soup.find("table")
                 rows = table.findAll('tr')
                 columnData = createColumnData(rows)
-                breakpoint()
-                pageData = createPageData(entries, year)
+                pageData = createPageData(rows, year)
                 pageData = cleanData(pageData)
-                data = pd.DataFrame(data = None, columns = columnData)
+                data = {}
+                for var in columnData:
+                	data[var] = []
                 for idx, i in enumerate(pageData):
                     rowData = pageData[idx]
-                    a_series = pd.Series(rowData, index = data.columns)
-                    data = data.append(a_series, ignore_index=True)
+                    for rowIdx, rowValue in enumerate(rowData):
+                    	data[columnData[rowIdx]].append(rowValue)
                 page += 1
             else:
                 #time.sleep(1)
                 res = requests.get('https://results.virginmoneylondonmarathon.com/' + str(year) + '/?page=' + str(page) + '&event=MAS&pid=search')
                 soup = BeautifulSoup(res.text, 'html.parser')
-                entries = soup.select('li.list-group-item.row')
-                pageData = createPageData(entries, year)
+                tables = soup.find("table")
+                rows = table.findAll('tr')
+                pageData = createPageData(rows, year)
                 pageData = cleanData(pageData)
                 for idx, i in enumerate(pageData):
                     rowData = pageData[idx]
-                    a_series = pd.Series(rowData, index = data.columns)
-                    data = data.append(a_series, ignore_index=True)
+                    for rowIdx, rowValue in enumerate(rowData):
+                    	data[columnData[rowIdx]].append(rowValue)
                 page += 1
         except:
-            print("Oops! No data on this page...")
+            print("Oops! Something went wrong...")
+            print("...year = " + str(year))
             flag = 1
     year -= 1
     yearCounter += 1
-    #page = 1
+    page = 1
     #flag = 0
+    #print(data)
+    #with open('test_' + str(year) + '.pkl', 'wb') as handle:
+    #pickle.dump(data, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
-data.to_pickle('./data/results_test.pkl')
 print(datetime.datetime.now() - begin_time)
