@@ -23,7 +23,7 @@ def createPageData(entries, year):
         #firstRow = entries[0].find_all('th')
         #for val in firstRow:
         #	print(val.getText())
-        	
+        
         row = entries[idx].find_all('td')
         
         #for val in row:
@@ -46,7 +46,6 @@ def createPageData(entries, year):
     return pageData
 
 def getSplits(link):
-    #time.sleep(1)
     resLink = requests.get(link)
     soupLink = BeautifulSoup(resLink.text, 'html.parser')
     splits = []
@@ -147,18 +146,18 @@ def cleanData(pageData):
         return
 
 # Collecting all data
-year = 2013
+year = 2018
 yearCounter = 0
 page = 1
 flag = 0
-while flag == 0 and year == 2013:
+while flag == 0 and year > 2015:
     print(year)
-    while flag == 0 and page < 4:
+    while flag == 0:
         try:
             print(page)
             if page == 1:
-                #time.sleep(1)
-                res = requests.get('https://results.virginmoneylondonmarathon.com/' + str(year) + '/?page=' + str(page) + '&event=MAS&pid=search')
+                time.sleep(1)
+                res = requests.get('https://results.virginmoneylondonmarathon.com/' + str(year) + '/?page=' + str(page) + '&event=ELIT&pid=search')
                 soup = BeautifulSoup(res.text, 'html.parser')
                 table = soup.find("table")
                 rows = table.findAll('tr')
@@ -174,10 +173,10 @@ while flag == 0 and year == 2013:
                     	data[columnData[rowIdx]].append(rowValue)
                 page += 1
             else:
-                #time.sleep(1)
-                res = requests.get('https://results.virginmoneylondonmarathon.com/' + str(year) + '/?page=' + str(page) + '&event=MAS&pid=search')
+                time.sleep(1)
+                res = requests.get('https://results.virginmoneylondonmarathon.com/' + str(year) + '/?page=' + str(page) + '&event=ELIT&pid=search')
                 soup = BeautifulSoup(res.text, 'html.parser')
-                tables = soup.find("table")
+                table = soup.find("table")
                 rows = table.findAll('tr')
                 pageData = createPageData(rows, year)
                 pageData = cleanData(pageData)
@@ -193,9 +192,8 @@ while flag == 0 and year == 2013:
     year -= 1
     yearCounter += 1
     page = 1
-    #flag = 0
-    #print(data)
-    #with open('test_' + str(year) + '.pkl', 'wb') as handle:
-    #pickle.dump(data, handle, protocol=pickle.HIGHEST_PROTOCOL)
+    flag = 0
+    with open('scrape_' + str(year+1) + '_ELIT.pkl', 'wb') as handle:
+    	pickle.dump(data, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
 print(datetime.datetime.now() - begin_time)

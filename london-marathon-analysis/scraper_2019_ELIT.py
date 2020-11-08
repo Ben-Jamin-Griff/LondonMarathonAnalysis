@@ -157,7 +157,7 @@ while year == 2019:
             print(page)
             if page == 1:
                 time.sleep(1)
-                res = requests.get('https://results.virginmoneylondonmarathon.com/' + str(year) + '/?page=' + str(page) + '&event=MAS&pid=search')
+                res = requests.get('https://results.virginmoneylondonmarathon.com/' + str(year) + '/?page=' + str(page) + '&event=ELIT&pid=search')
                 soup = BeautifulSoup(res.text, 'html.parser')
                 entries = soup.select('li.list-group-item.row')
                 columnData = createColumnData(entries)
@@ -173,7 +173,7 @@ while year == 2019:
                 page += 1
             else:
                 time.sleep(1)
-                res = requests.get('https://results.virginmoneylondonmarathon.com/' + str(year) + '/?page=' + str(page) + '&event=MAS&pid=search')
+                res = requests.get('https://results.virginmoneylondonmarathon.com/' + str(year) + '/?page=' + str(page) + '&event=ELIT&pid=search')
                 soup = BeautifulSoup(res.text, 'html.parser')
                 entries = soup.select('li.list-group-item.row')
                 pageData = createPageData(entries, year)
@@ -192,7 +192,7 @@ while year == 2019:
     flag = 0
     
 
-with open('scrape_' + str(year+1) + '.pkl', 'wb') as handle:
+with open('scrape_' + str(year+1) + '_ELIT.pkl', 'wb') as handle:
     pickle.dump(data, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
 print(datetime.datetime.now() - begin_time)
