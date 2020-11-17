@@ -19,18 +19,22 @@ def createPageData(entries, year):
         if idx == len(entries):
             print('...returning page data')
             return pageData
-        row = entries[idx].select('div.list-field')
-        name = entries[idx].select('h4.list-field')[0].getText()[:-6]
-        country = entries[idx].select('h4.list-field')[0].getText()[-4:-1]
-        link = entries[idx].select('a')[0]['href']
+        if year == 2019:
+            row = entries[idx].select('div.list-field')
+            name = entries[idx].select('h4.list-field')[0].getText()
+            link = entries[idx].select('a')[0]['href']
+        elif year < 2019 and year > 2015:
+            row = entries[idx].find_all('td')
+            name = row[3].getText()
+            link = row[3].select('a')[0]['href']
         link = 'https://results.virginmoneylondonmarathon.com/' + str(year) + '/' + str(link)
         splits = getSplits(link)
         entry = []
         for idx, j in enumerate(row):
             rowValue = row[idx].getText()
             entry.append(rowValue)
+        entry.pop(3)
         entry.insert(3, name)
-        entry.insert(4, country)
         entry = entry[:-1]
         entry = entry + splits
         pageData.append(entry)
@@ -43,6 +47,8 @@ def getSplits(link):
     status = soupLink.select('td.f-race_status')[0].getText()
     matched = re.match('Finished',status)
     if matched:
+        club = soupLink.select('td.f-club')[0].getText()
+        splits.append(club)
         splits.append(status)
         split5k = soupLink.select('tr.f-time_01')[0].getText()[13:21]
         splits.append(split5k)
@@ -78,42 +84,28 @@ def getSplits(link):
         splits.append('-')
     return splits
 
-def createColumnData(entries):
+def createColumnData():
     columnData = []
-    firstRow = entries[0].select('div.list-field')
-    for idx, i in enumerate(firstRow):
-        if idx == 4:
-            rowValue = firstRow[idx].getText()[4:]
-            columnData.append(rowValue)
-        elif idx == 5:
-            rowValue = firstRow[idx].getText()[13:]
-            columnData.append(rowValue)
-        elif idx == 6:
-            rowValue = firstRow[idx].getText()[8:]
-            columnData.append(rowValue)
-        elif idx == 7:
-            rowValue = firstRow[idx].getText()[4:]
-            columnData.append(rowValue)
-        elif idx == 8:
-            rowValue = firstRow[idx].getText()[6:]
-            columnData.append(rowValue)
-        elif idx == 9:
-            rowValue = firstRow[idx].getText()
-        else:
-            rowValue = firstRow[idx].getText()
-            columnData.append(rowValue)
-    columnData.insert(4, 'Country')
-    columnData.append('Status')
-    columnData.append('5K Split')
-    columnData.append('10K Split')
-    columnData.append('15K Split')
-    columnData.append('20K Split')
-    columnData.append('Half Split')
-    columnData.append('25K Split')
-    columnData.append('30K Split')
-    columnData.append('35K Split')
-    columnData.append('40K Split')
-    columnData.append('Finish Split')
+    columnData.insert(0, 'Place (Overall)')
+    columnData.insert(1, 'Place (Gender)')
+    columnData.insert(2, 'Place (Category)')
+    columnData.insert(3, 'Name')
+    columnData.insert(4, 'Runner Number')
+    columnData.insert(5, 'Category')
+    columnData.insert(6, 'Half')
+    columnData.insert(7, 'Finish')
+    columnData.insert(8, 'Club')
+    columnData.insert(9,'Status')
+    columnData.insert(10,'5K Split')
+    columnData.insert(11,'10K Split')
+    columnData.insert(12,'15K Split')
+    columnData.insert(13,'20K Split')
+    columnData.insert(14,'Half Split')
+    columnData.insert(15,'25K Split')
+    columnData.insert(16,'30K Split')
+    columnData.insert(17,'35K Split')
+    columnData.insert(18,'40K Split')
+    columnData.insert(19,'Finish Split')
     return columnData
 
 def cleanData(pageData):
@@ -149,19 +141,23 @@ year = 2019
 yearCounter = 0
 page = 1
 flag = 0
-while year == 2019:
+while flag == 0 and year > 2015:
     print(year)
-    while flag == 0:
+    while flag == 0 and page == 1:
         try:
             print(page)
             if page == 1:
                 time.sleep(1)
                 res = requests.get('https://results.virginmoneylondonmarathon.com/' + str(year) + '/?page=' + str(page) + '&event=ELIT&pid=search')
                 soup = BeautifulSoup(res.text, 'html.parser')
-                entries = soup.select('li.list-group-item.row')
-                columnData = createColumnData(entries)
+                if year == 2019:
+                    entries = soup.select('li.list-group-item.row')
+                elif year < 2019 and year > 2015:
+                    table = soup.find("table")
+                    entries = table.findAll('tr')
+                columnData = createColumnData()
                 pageData = createPageData(entries, year)
-                pageData = cleanData(pageData)
+                #pageData = cleanData(pageData)
                 data = {}
                 for var in columnData:
                 	data[var] = []
@@ -174,7 +170,11 @@ while year == 2019:
                 time.sleep(1)
                 res = requests.get('https://results.virginmoneylondonmarathon.com/' + str(year) + '/?page=' + str(page) + '&event=ELIT&pid=search')
                 soup = BeautifulSoup(res.text, 'html.parser')
-                entries = soup.select('li.list-group-item.row')
+                if year == 2019:
+                    entries = soup.select('li.list-group-item.row')
+                elif year < 2019 and year > 2015:
+                    table = soup.find("table")
+                    entries = table.findAll('tr')
                 pageData = createPageData(entries, year)
                 pageData = cleanData(pageData)
                 for idx, i in enumerate(pageData):
@@ -189,9 +189,9 @@ while year == 2019:
     yearCounter += 1
     page = 1
     flag = 0
-    
-
-with open('scrape_' + str(year+1) + '_ELIT.pkl', 'wb') as handle:
-    pickle.dump(data, handle, protocol=pickle.HIGHEST_PROTOCOL)
+    print(data)
+    breakpoint()
+    #with open('scrape_' + str(year+1) + '_ELIT.pkl', 'wb') as handle:
+    #    pickle.dump(data, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
 print(datetime.datetime.now() - begin_time)

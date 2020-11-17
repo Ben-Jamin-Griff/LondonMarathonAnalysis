@@ -19,16 +19,7 @@ def createPageData(entries, year):
         if idx == len(entries):
           print('...returning page data')
           return pageData
-          
-        #firstRow = entries[0].find_all('th')
-        #for val in firstRow:
-        #	print(val.getText())
-        
         row = entries[idx].find_all('td')
-        
-        #for val in row:
-        #	print(val)
-        
         country = row[3].getText()[-5:-2]
         name = row[3].getText()[1:-7]
         link = row[3].select('a')[0]['href']
