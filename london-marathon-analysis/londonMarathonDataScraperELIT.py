@@ -23,7 +23,7 @@ def createPageData(entries, year):
             row = entries[idx].select('div.list-field')
             name = entries[idx].select('h4.list-field')[0].getText()
             link = entries[idx].select('a')[0]['href']
-        elif year < 2019 and year > 2015:
+        elif year < 2019 and year > 2009:
             row = entries[idx].find_all('td')
             name = row[3].getText()
             link = row[3].select('a')[0]['href']
@@ -37,6 +37,8 @@ def createPageData(entries, year):
         entry.insert(3, name)
         entry = entry[:-1]
         entry = entry + splits
+        if year < 2019 and year > 2009:
+            entry.pop(4)
         pageData.append(entry)
     return pageData
 
@@ -44,34 +46,50 @@ def getSplits(link):
     resLink = requests.get(link)
     soupLink = BeautifulSoup(resLink.text, 'html.parser')
     splits = []
-    status = soupLink.select('td.f-race_status')[0].getText()
+    try:
+        status = soupLink.select('td.f-race_status')[0].getText()
+    except:
+        status = 'Finished'
     matched = re.match('Finished',status)
     if matched:
-        club = soupLink.select('td.f-club')[0].getText()
-        splits.append(club)
-        splits.append(status)
-        split5k = soupLink.select('tr.f-time_01')[0].getText()[13:21]
-        splits.append(split5k)
-        split10k = soupLink.select('tr.f-time_02')[0].getText()[14:22]
-        splits.append(split10k)
-        split15k = soupLink.select('tr.f-time_03')[0].getText()[14:22]
-        splits.append(split15k)
-        split20k = soupLink.select('tr.f-time_04')[0].getText()[14:22]
-        splits.append(split20k)
-        splitHalf = soupLink.select('tr.f-time_05')[0].getText()[15:23]
-        splits.append(splitHalf)
-        split25k = soupLink.select('tr.f-time_06')[0].getText()[14:22]
-        splits.append(split25k)
-        split30k = soupLink.select('tr.f-time_07')[0].getText()[14:22]
-        splits.append(split30k)
-        split35k = soupLink.select('tr.f-time_08')[0].getText()[14:22]
-        splits.append(split35k)
-        split40k = soupLink.select('tr.f-time_09')[0].getText()[14:22]
-        splits.append(split40k)
-        splitFinish = soupLink.select('tr.f-time_finish_netto')[0].getText()[13:21]
-        splits.append(splitFinish)
+        try:
+            club = soupLink.select('td.f-club')[0].getText()
+            splits.append(club)
+            splits.append(status)
+            split5k = soupLink.select('tr.f-time_01')[0].getText()[13:21]
+            splits.append(split5k)
+            split10k = soupLink.select('tr.f-time_02')[0].getText()[14:22]
+            splits.append(split10k)
+            split15k = soupLink.select('tr.f-time_03')[0].getText()[14:22]
+            splits.append(split15k)
+            split20k = soupLink.select('tr.f-time_04')[0].getText()[14:22]
+            splits.append(split20k)
+            splitHalf = soupLink.select('tr.f-time_05')[0].getText()[15:23]
+            splits.append(splitHalf)
+            split25k = soupLink.select('tr.f-time_06')[0].getText()[14:22]
+            splits.append(split25k)
+            split30k = soupLink.select('tr.f-time_07')[0].getText()[14:22]
+            splits.append(split30k)
+            split35k = soupLink.select('tr.f-time_08')[0].getText()[14:22]
+            splits.append(split35k)
+            split40k = soupLink.select('tr.f-time_09')[0].getText()[14:22]
+            splits.append(split40k)
+            splitFinish = soupLink.select('tr.f-time_finish_netto')[0].getText()[13:21]
+            splits.append(splitFinish)
+        except:
+            splits.append('-')
+            splits.append('-')
+            splits.append('-')
+            splits.append('-')
+            splits.append('-')
+            splits.append('-')
+            splits.append('-')
+            splits.append('-')
+            splits.append('-')
+            splits.append('-')
     else:
         splits.append(status)
+        splits.append('-')
         splits.append('-')
         splits.append('-')
         splits.append('-')
@@ -141,9 +159,9 @@ year = 2019
 yearCounter = 0
 page = 1
 flag = 0
-while flag == 0 and year > 2015:
+while flag == 0 and year > 2012:
     print(year)
-    while flag == 0 and page == 1:
+    while flag == 0:
         try:
             print(page)
             if page == 1:
@@ -152,12 +170,11 @@ while flag == 0 and year > 2015:
                 soup = BeautifulSoup(res.text, 'html.parser')
                 if year == 2019:
                     entries = soup.select('li.list-group-item.row')
-                elif year < 2019 and year > 2015:
+                elif year < 2019 and year > 2009:
                     table = soup.find("table")
                     entries = table.findAll('tr')
                 columnData = createColumnData()
                 pageData = createPageData(entries, year)
-                #pageData = cleanData(pageData)
                 data = {}
                 for var in columnData:
                 	data[var] = []
@@ -172,11 +189,10 @@ while flag == 0 and year > 2015:
                 soup = BeautifulSoup(res.text, 'html.parser')
                 if year == 2019:
                     entries = soup.select('li.list-group-item.row')
-                elif year < 2019 and year > 2015:
+                elif year < 2019 and year > 2009:
                     table = soup.find("table")
                     entries = table.findAll('tr')
                 pageData = createPageData(entries, year)
-                pageData = cleanData(pageData)
                 for idx, i in enumerate(pageData):
                     rowData = pageData[idx]
                     for rowIdx, rowValue in enumerate(rowData):
@@ -189,9 +205,8 @@ while flag == 0 and year > 2015:
     yearCounter += 1
     page = 1
     flag = 0
-    print(data)
-    breakpoint()
-    #with open('scrape_' + str(year+1) + '_ELIT.pkl', 'wb') as handle:
-    #    pickle.dump(data, handle, protocol=pickle.HIGHEST_PROTOCOL)
+    data = None
+    with open('scrape_' + str(year+1) + '_ELIT.pkl', 'wb') as handle:
+        pickle.dump(data, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
 print(datetime.datetime.now() - begin_time)
