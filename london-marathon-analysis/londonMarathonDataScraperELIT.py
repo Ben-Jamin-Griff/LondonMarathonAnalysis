@@ -205,7 +205,6 @@ while flag == 0 and year > 2012:
     yearCounter += 1
     page = 1
     flag = 0
-    data = None
     with open('scrape_' + str(year+1) + '_ELIT.pkl', 'wb') as handle:
         pickle.dump(data, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
