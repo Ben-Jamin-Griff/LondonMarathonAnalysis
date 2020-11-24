@@ -177,13 +177,13 @@ def createColumnData():
         return
 
 # Collecting all data
-year = 2019
+year = 2016
 yearCounter = 0
 page = 1
 flag = 0
-while flag == 0 and year > 2010:
+while flag == 0 and year > 2015: #2011 is min year
     print(year)
-    while flag == 0 and page < 6:
+    while flag == 0:
         try:
             print(page)
             if page == 1:
