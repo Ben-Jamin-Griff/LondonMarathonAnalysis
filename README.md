@@ -1,32 +1,20 @@
-Analysis of results from the London Marathon over the past 10 years
-
-Here is some text to see if working copy works.
-
-Here is some mroe text to see if changes in Pythonista will automatically change in working copy
-
 Below is a template I would like to use for this readme. I need to make it look good...
 
 <h1 align="center">10 Year Analysis of London Marathon Data</h1>
 
 <p align="center">
 
-<img src="https://img.shields.io/badge/made%20by-ben-jamin-griff-blue.svg" >
+<img src="https://img.shields.io/badge/made%20by-ben--jamin--griff-blue" >
 
 <img src="https://badges.frapsoft.com/os/v1/open-source.svg?v=103" >
 
 </p>
 
-_A Vue.js wrapper for the beautiful date-range picker made by the **[Baremetrics](https://baremetrics.com)** team._
+_A combined python | jupter notebook project._
 
 ---
 
-The Vue-Baremetrics date range picker is a simplified solution for selecting both date ranges and single dates all from a single calender view. With a revamped minimalistic redesign.
-
-Redesigned and Wrapped for Vue.js by [Divyansh Tripathi](https://silentlad.com)
-
-# [View a demo](https://silent-lad.github.io/Vue2BaremetricsCalendar/#/)
-
-## [NPM Package](https://npmjs.com/package/vue2-baremetrics-calendar)
+This project was created to explore London Marathon data scraped from the offical London Marathon results pages for the past 10 years. The webs scrapper was written on my iPad using Pythonista and Working Copy and the analysis was conducted in Jupyter.
 
 <p align="center">
 <img src="https://media.giphy.com/media/3o7ZePMv221orZKz84/giphy.gif">
