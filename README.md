@@ -25,4 +25,4 @@ The project was created to explore 10 years of london marathon data scraped from
 </p><br>
 
 # Instructions
-To view the analysis of the data open the file [london_marathon_analysis.ipynb](https://github.com/Ben-Jamin-Griff/london-marathon-analysis/blob/master/london_marathon_analysis.ipynb)
+To view the analysis of the data see [london_marathon_analysis.ipynb](https://github.com/Ben-Jamin-Griff/london-marathon-analysis/blob/master/london_marathon_analysis.ipynb)
