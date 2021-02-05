@@ -2,7 +2,7 @@
 
 <p align="center">
 
-<img src="https://img.shields.io/badge/made%20by-ben--jamin--griff-blue" >
+<img src="https://img.shields.io/badge/Made%20By-Ben--Jamin--Griff-blue" >
 
 <img src="https://badges.frapsoft.com/os/v1/open-source.svg?v=103" >
 
