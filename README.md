@@ -1,5 +1,3 @@
-Below is a template I would like to use for this readme. I need to make it look good...
-
 <h1 align="center">10 Year Analysis of London Marathon Data</h1>
 
 <p align="center">
