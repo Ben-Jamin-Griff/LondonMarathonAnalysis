@@ -1,4 +1,3 @@
-# london-marathon-analysis
 Analysis of results from the London Marathon over the past 10 years
 
 Here is some text to see if working copy works.
@@ -7,25 +6,14 @@ Here is some mroe text to see if changes in Pythonista will automatically change
 
 Below is a template I would like to use for this readme. I need to make it look good...
 
-<h1 align="center">Vue Baremetrics Calendar</h1>
+<h1 align="center">10 Year Analysis of London Marathon Data</h1>
 
 <p align="center">
 
-<img src="https://img.shields.io/badge/made%20by-silentlad-blue.svg" >
-
-<img src="https://img.shields.io/npm/v/vue2-baremetrics-calendar">
-
-<img src="https://img.shields.io/badge/vue-2.6.10-green.svg">
+<img src="https://img.shields.io/badge/made%20by-ben-jamin-griff-blue.svg" >
 
 <img src="https://badges.frapsoft.com/os/v1/open-source.svg?v=103" >
 
-<img src="https://img.shields.io/github/stars/silent-lad/Vue2BaremetricsCalendar.svg?style=flat">
-
-<img src="https://img.shields.io/github/languages/top/silent-lad/Vue2BaremetricsCalendar.svg">
-
-<img src="https://img.shields.io/github/issues/silent-lad/Vue2BaremetricsCalendar.svg">
-
-<img src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat">
 </p>
 
 _A Vue.js wrapper for the beautiful date-range picker made by the **[Baremetrics](https://baremetrics.com)** team._
@@ -41,7 +29,7 @@ Redesigned and Wrapped for Vue.js by [Divyansh Tripathi](https://silentlad.com)
 ## [NPM Package](https://npmjs.com/package/vue2-baremetrics-calendar)
 
 <p align="center">
-<img src="https://media.giphy.com/media/VFvkCMvXvlTNAGuaZm/giphy.gif">
+<img src="https://media.giphy.com/media/3o7ZePMv221orZKz84/giphy.gif">
 </p>
 
 # Installation
