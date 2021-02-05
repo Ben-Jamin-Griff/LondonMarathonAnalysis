@@ -18,7 +18,9 @@
 
 ---
 
-This project was created to explore London Marathon data scraped from the offical London Marathon results pages for the past 10 years. The webs scrapper was written on an iPad using Pythonista and Working Copy and the analysis was conducted in Jupyter.
+This project was created to explore 10 years of london marathon data scraped from the offical london marathon results pages. The web scrapper was written on an iPad using Pythonista and Working Copy, this an attempt to test out remote development technoliges and worked reasonably well. The analysis was conducted in a Jupyter Notebook and VS Code.
+
+The analysis is still ongoing...
 
 <p align="center">
 <img src="https://media.giphy.com/media/l0NwF1dnk7GRz3pK0/giphy.gif">
