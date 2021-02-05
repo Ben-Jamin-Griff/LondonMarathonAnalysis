@@ -1,4 +1,4 @@
-<h1 align="center">10 Year Analysis of London Marathon Data</h1>
+<h1 align="center">Analysis of 10 Years of London Marathon Data</h1>
 
 <p align="center">
 
